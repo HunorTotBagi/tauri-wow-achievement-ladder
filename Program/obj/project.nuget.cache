@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "+1EQbynozCY=",
+  "dgSpecHash": "zw4RJuW7ytM=",
   "success": true,
-  "projectFilePath": "C:\\Users\\Hunor\\Downloads\\01 Private\\tauri-wow-achievement-ladder\\Achievements\\Program\\Program.csproj",
+  "projectFilePath": "C:\\Users\\Hunor\\Downloads\\01 Private\\tauri-wow-achievement-ladder\\Program\\Program.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\Hunor\\.nuget\\packages\\htmlagilitypack\\1.12.4\\htmlagilitypack.1.12.4.nupkg.sha512",
     "C:\\Users\\Hunor\\.nuget\\packages\\microsoft.extensions.configuration\\10.0.0\\microsoft.extensions.configuration.10.0.0.nupkg.sha512",
