@@ -28,6 +28,32 @@ public class Program
         LoadCharacters("tauri.txt", "[HU] Tauri WoW Server", "Tauri", allCharacters);
         LoadCharacters("wod.txt", "[HU] Warriors of Darkness", "WoD", allCharacters);
 
+        var targetGuilds = new[]
+        {
+            new { GuildName = "Competence Optional", RealmApi = "[EN] Evermoon",           RealmDisplay = "Evermoon" },
+            new { GuildName = "Skill Issue",         RealmApi = "[EN] Evermoon",           RealmDisplay = "Evermoon" },
+            new { GuildName = "Despair",             RealmApi = "[EN] Evermoon",           RealmDisplay = "Evermoon" },
+            new { GuildName = "Mythic",              RealmApi = "[HU] Warriors of Darkness", RealmDisplay = "WoD" },
+            new { GuildName = "LOS CARA MÁXIMA",     RealmApi = "[EN] Evermoon",           RealmDisplay = "Evermoon" },
+            new { GuildName = "Vistustan",           RealmApi = "[EN] Evermoon",           RealmDisplay = "Evermoon" },
+            new { GuildName = "Yin Yang",            RealmApi = "[EN] Evermoon",           RealmDisplay = "Evermoon" },
+            new { GuildName = "Infernum",            RealmApi = "[HU] Tauri WoW Server",   RealmDisplay = "Tauri" },
+            new { GuildName = "Shadow Hunters",      RealmApi = "[EN] Evermoon",           RealmDisplay = "Evermoon" },
+            new { GuildName = "Punishers",           RealmApi = "[EN] Evermoon",           RealmDisplay = "Evermoon" },
+            new { GuildName = "Искатели легенд",     RealmApi = "[EN] Evermoon",           RealmDisplay = "Evermoon" }
+        };
+
+        foreach (var g in targetGuilds)
+        {
+            await LoadGuildMembersLevel100Async(
+                guildName: g.GuildName,
+                apiRealm: g.RealmApi,
+                displayRealm: g.RealmDisplay,
+                apiUrl: apiUrl,
+                secret: secret,
+                output: allCharacters);
+        }
+
         Dictionary<string, (int Points, string DisplayRealm)> results = new();
 
         foreach (var (name, apiRealm, displayRealm) in allCharacters)
@@ -107,6 +133,60 @@ public class Program
             }
         }
     }
+
+    static async Task LoadGuildMembersLevel100Async(
+        string guildName,
+        string apiRealm,
+        string displayRealm,
+        string apiUrl,
+        string secret,
+        List<(string, string, string)> output)
+    {
+        var body = new
+        {
+            secret = secret,
+            url = "guild-info",
+            @params = new
+            {
+                r = apiRealm,
+                gn = guildName
+            }
+        };
+
+        var jsonBody = JsonSerializer.Serialize(body);
+        var content = new StringContent(jsonBody, Encoding.UTF8, "application/json");
+
+        try
+        {
+            var response = await client.PostAsync(apiUrl, content);
+            string responseString = await response.Content.ReadAsStringAsync();
+
+            var guildInfo = JsonSerializer.Deserialize<GuildInfoResponse>(responseString);
+
+            if (guildInfo?.response?.guildList == null)
+            {
+                Console.WriteLine($"Guild {guildName} ({displayRealm}): no guildList in response.");
+                return;
+            }
+
+            int added = 0;
+
+            foreach (var member in guildInfo.response.guildList.Values)
+            {
+                if (member.level == 100)
+                {
+                    output.Add((member.name, apiRealm, displayRealm));
+                    added++;
+                }
+            }
+
+            Console.WriteLine($"Guild {guildName} ({displayRealm}): added {added} level 100 members.");
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error loading guild {guildName} ({displayRealm}): {ex.Message}");
+        }
+    }
 }
 
 public class ApiResponse
@@ -120,4 +200,24 @@ public class ApiResponse
 public class ApiResponseInner
 {
     public int pts { get; set; }
+}
+
+public class GuildInfoResponse
+{
+    public bool success { get; set; }
+    public int errorcode { get; set; }
+    public string errorstring { get; set; }
+    public GuildInfoInner response { get; set; }
+}
+
+public class GuildInfoInner
+{
+    public Dictionary<string, GuildMember> guildList { get; set; }
+}
+
+public class GuildMember
+{
+    public string name { get; set; }
+    public int level { get; set; }
+    public string realm { get; set; }
 }
