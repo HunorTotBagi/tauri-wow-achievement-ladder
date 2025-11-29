@@ -1,6 +1,6 @@
-# Tauri Achievement Ladder
+# Tauri WoW Achievement Ladder
 
-This repository contains a .NET console application that builds a **local achievement ladder** for characters on the Tauri WoW private servers.
+This repository contains a .NET console application that builds a **local achievement ladder** for characters on the [Tauri WoW](https://tauriwow.com/) private server.
 
 The application:
 
@@ -87,3 +87,10 @@ The end result should look something like this in your terminal
 
 <img width="346" height="401" alt="image" src="https://github.com/user-attachments/assets/ef3fd2fc-941b-484a-8069-6e00ecc76c96" />
 
+# Note
+
+The character list is generated from the [public achievement ladder](https://ladder.tauriwow.com/), which is currently frozen at the final day of the Mists of Pandaria expansion. Consequently, the achievement rankings obtained using this method are not guaranteed to be fully accurate, but they do provide a reasonable overview of the current landscape.
+
+Characters who have renamed, transferred, or otherwise changed identifiers will not appear, even if they hold significant achievement totals. Likewise, newer characters or recently active achievement hunters may be missing from the list.
+
+A complete brute-force scan of all possible character names was deliberately avoided, as such an approach would be extremely resource-intensive and inefficient.
